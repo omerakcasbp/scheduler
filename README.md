@@ -1,1 +1,2 @@
-# scheduler
+# Resource Scheduler
+Resource scheduler module.
