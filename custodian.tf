@@ -32,7 +32,6 @@ data "archive_file" "custodian_lambda_archive" {
 module "cloud_custodian_lambda" {
   #checkov:skip=CKV_TF_1:Ensure Terraform module sources use a commit hash
   source           = "github.com/schubergphilis/terraform-aws-mcaf-lambda?ref=v0.3.13"
-  providers        = { aws.lambda = aws }
   name             = "CloudCustodiaLambda"
   filename         = data.archive_file.custodian_lambda_archive.output_path
   create_policy    = false
