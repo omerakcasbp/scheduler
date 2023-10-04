@@ -15,7 +15,7 @@ resource "aws_kms_alias" "custodian_lambda_key" {
 
 resource "local_file" "policy_file" {
   filename = "lambda/custodian/config.json"
-  content = templatefile("lambda/custodian/policy.tpl", {
+  content  = templatefile("lambda/custodian/policy.tpl", {
     lambda_role_arn = aws_iam_role.CustodianLambda.arn,
     lambda_schedule = "rate(1 hour)"
   })
@@ -29,7 +29,8 @@ data "archive_file" "custodian_lambda_archive" {
   depends_on  = [local_file.policy_file]
 }
 
-/*module "cloud_custodian_lambda" {
+/*
+module "cloud_custodian_lambda" {
   #checkov:skip=CKV_TF_1:Ensure Terraform module sources use a commit hash
   source           = "github.com/schubergphilis/terraform-aws-mcaf-lambda?ref=v0.3.13"
   providers        = { aws.lambda = aws }
@@ -46,21 +47,21 @@ data "archive_file" "custodian_lambda_archive" {
   source_code_hash = data.archive_file.custodian_lambda_archive.output_base64sha256
 }*/
 
-module "lambda_function_existing_package_local" {
-  source = "github.com/terraform-aws-modules/terraform-aws-lambda"
 
-  function_name = "CloudCustodiaLambda"
-  description   = "Custodian Lambda"
-  handler       = "custodian_policy.runcustodian_policy.run"
-  runtime       = "python3.11"
+module "cloud_custodian_lambda" {
+  source                           = "github.com/terraform-aws-modules/terraform-aws-lambda"
+  function_name                    = "ResourceScheduler"
+  description                      = "Resource Scheduler"
+  handler                          = "custodian_policy.runcustodian_policy.run"
+  runtime                          = "python3.11"
   lambda_function_source_code_hash = data.archive_file.custodian_lambda_archive.output_base64sha256
-  create_package         = false
-  local_existing_package = data.archive_file.custodian_lambda_archive.output_path
-  kms_key_arn = aws_kms_key.custodian_lambda_key.arn
-  lambda_role_arn = aws_iam_role.CustodianLambda.arn
-  tags             = { custodian-info = "mode=periodic:version=0.9.31" }
-
-
+  create_package                   = false
+  local_existing_package           = data.archive_file.custodian_lambda_archive.output_path
+  kms_key_arn                      = aws_kms_key.custodian_lambda_key.arn
+  lambda_role_arn                  = aws_iam_role.CustodianLambda.arn
+  tags                             = { custodian-info = "mode=periodic:version=0.9.31" }
+  depends_on                       = [data.archive_file.custodian_lambda_archive]
+  timeout                          = 300
 }
 
 
@@ -92,7 +93,7 @@ data "aws_iam_policy_document" "custodian_lambda_policy" {
   statement {
     effect    = "Allow"
     resources = ["arn:aws:ec2:eu-central-1:${data.aws_caller_identity.current.account_id}:instance/*"]
-    actions = [
+    actions   = [
       "ec2:StartInstances",
       "ec2:DescribeTags",
       "ec2:StopInstances",
@@ -103,12 +104,12 @@ data "aws_iam_policy_document" "custodian_lambda_policy" {
   statement {
     effect    = "Allow"
     resources = ["*"]
-    actions = [
+    actions   = [
       "ec2:DescribeInstances"
     ]
   }
   statement {
-    effect = "Allow"
+    effect  = "Allow"
     actions = [
       "kms:Decrypt",
       "kms:GenerateDataKey*",
@@ -116,7 +117,7 @@ data "aws_iam_policy_document" "custodian_lambda_policy" {
       "secretsmanager:DescribeSecret",
       "secretsmanager:ListSecrets"
     ]
-    sid = "DecryptKMS"
+    sid       = "DecryptKMS"
     resources = [
       aws_kms_key.custodian_lambda_key.arn
     ]
@@ -187,4 +188,5 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_rw_fallout_retry_step
   source_arn     = aws_cloudwatch_event_rule.cloud_custodian_lambda_event_rule.arn
   source_account = data.aws_caller_identity.current.account_id
 }
+
 
