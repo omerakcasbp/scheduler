@@ -29,23 +29,7 @@ data "archive_file" "custodian_lambda_archive" {
   depends_on  = [local_file.policy_file]
 }
 
-/*
-module "cloud_custodian_lambda" {
-  #checkov:skip=CKV_TF_1:Ensure Terraform module sources use a commit hash
-  source           = "github.com/schubergphilis/terraform-aws-mcaf-lambda?ref=v0.3.13"
-  providers        = { aws.lambda = aws }
-  name             = "CloudCustodiaLambda"
-  filename         = data.archive_file.custodian_lambda_archive.output_path
-  create_policy    = false
-  runtime          = "python3.11"
-  tags             = { custodian-info = "mode=periodic:version=0.9.31" }
-  handler          = "custodian_policy.run"
-  timeout          = 300
-  kms_key_arn      = aws_kms_key.custodian_lambda_key.arn
-  depends_on       = [data.archive_file.custodian_lambda_archive]
-  role_arn         = aws_iam_role.CustodianLambda.arn
-  source_code_hash = data.archive_file.custodian_lambda_archive.output_base64sha256
-}*/
+
 
 
 module "cloud_custodian_lambda" {
