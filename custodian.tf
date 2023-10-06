@@ -15,7 +15,7 @@ resource "aws_kms_alias" "custodian_lambda_key" {
 
 resource "local_file" "policy_file" {
   filename = "lambda/custodian/config.json"
-  content  = templatefile("lambda/custodian/policy.tpl", {
+  content = templatefile("lambda/custodian/policy.tpl", {
     lambda_role_arn = aws_iam_role.CustodianLambda.arn,
     lambda_schedule = "rate(1 hour)"
   })
@@ -42,7 +42,7 @@ module "cloud_custodian_lambda" {
   create_package                   = false
   local_existing_package           = data.archive_file.custodian_lambda_archive.output_path
   kms_key_arn                      = aws_kms_key.custodian_lambda_key.arn
-  lambda_role_arn                  = aws_iam_role.CustodianLambda.arn
+  lambda_role                      = aws_iam_role.CustodianLambda.arn
   tags                             = { custodian-info = "mode=periodic:version=0.9.31" }
   depends_on                       = [data.archive_file.custodian_lambda_archive]
   timeout                          = 300
@@ -77,7 +77,7 @@ data "aws_iam_policy_document" "custodian_lambda_policy" {
   statement {
     effect    = "Allow"
     resources = ["arn:aws:ec2:eu-central-1:${data.aws_caller_identity.current.account_id}:instance/*"]
-    actions   = [
+    actions = [
       "ec2:StartInstances",
       "ec2:DescribeTags",
       "ec2:StopInstances",
@@ -88,12 +88,12 @@ data "aws_iam_policy_document" "custodian_lambda_policy" {
   statement {
     effect    = "Allow"
     resources = ["*"]
-    actions   = [
+    actions = [
       "ec2:DescribeInstances"
     ]
   }
   statement {
-    effect  = "Allow"
+    effect = "Allow"
     actions = [
       "kms:Decrypt",
       "kms:GenerateDataKey*",
@@ -101,7 +101,7 @@ data "aws_iam_policy_document" "custodian_lambda_policy" {
       "secretsmanager:DescribeSecret",
       "secretsmanager:ListSecrets"
     ]
-    sid       = "DecryptKMS"
+    sid = "DecryptKMS"
     resources = [
       aws_kms_key.custodian_lambda_key.arn
     ]
