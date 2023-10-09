@@ -38,7 +38,6 @@ module "cloud_custodian_lambda" {
   description                      = "Resource Scheduler"
   handler                          = "custodian_policy.runcustodian_policy.run"
   runtime                          = "python3.11"
-  lambda_function_source_code_hash = data.archive_file.custodian_lambda_archive.output_base64sha256
   create_package                   = false
   local_existing_package           = data.archive_file.custodian_lambda_archive.output_path
   kms_key_arn                      = aws_kms_key.custodian_lambda_key.arn
