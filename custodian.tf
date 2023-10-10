@@ -9,7 +9,7 @@ resource "aws_kms_key" "custodian_lambda_key" {
 }
 
 resource "aws_kms_alias" "custodian_lambda_key" {
-  name          = "platform/custodianlambda"
+  name          = "alias/custodianlambda"
   target_key_id = aws_kms_key.custodian_lambda_key.key_id
 }
 
@@ -159,14 +159,14 @@ resource "aws_cloudwatch_event_rule" "cloud_custodian_lambda_event_rule" {
 }
 
 resource "aws_cloudwatch_event_target" "profile_generator_lambda_target" {
-  arn  = module.cloud_custodian_lambda.arn
+  arn  = module.cloud_custodian_lambda.lambda_cloudwatch_log_group_arn
   rule = aws_cloudwatch_event_rule.cloud_custodian_lambda_event_rule.name
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_rw_fallout_retry_step_deletion_lambda" {
   statement_id   = "AllowExecutionFromCloudWatch"
   action         = "lambda:InvokeFunction"
-  function_name  = module.cloud_custodian_lambda.name
+  function_name  =  module.cloud_custodian_lambda.lambda_function_name
   principal      = "events.amazonaws.com"
   source_arn     = aws_cloudwatch_event_rule.cloud_custodian_lambda_event_rule.arn
   source_account = data.aws_caller_identity.current.account_id
