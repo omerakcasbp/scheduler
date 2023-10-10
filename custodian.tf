@@ -3,6 +3,7 @@ data "aws_caller_identity" "current" {}
 module "module_pip_read" {
   source  = "app.terraform.io/devolksbank-ep/module-pip/terraform//modules/pip-read"
   version = "0.0.30"
+  providers            = { aws.pip_read = aws }
 }
 
 resource "aws_kms_key" "custodian_lambda_key" {
@@ -175,6 +176,4 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_rw_fallout_retry_step
   source_account = data.aws_caller_identity.current.account_id
 }
 
-output "pip_output" {
-  value = module.module_pip_read
-}
+
