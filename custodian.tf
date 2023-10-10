@@ -1,4 +1,4 @@
-data "aws_caller_identity" "default" {}
+data "aws_caller_identity" "current" {}
 
 resource "aws_kms_key" "custodian_lambda_key" {
   #TODO: if kms key not exists create
@@ -14,8 +14,8 @@ resource "aws_kms_alias" "custodian_lambda_key" {
 }
 
 resource "local_file" "policy_file" {
-  filename = "lambda/custodian/config.json"
-  content = templatefile("lambda/custodian/policy.tpl", {
+  filename = "./lambda/custodian/config.json"
+  content = templatefile("./lambda/custodian/policy.tpl", {
     lambda_role_arn = aws_iam_role.CustodianLambda.arn,
     lambda_schedule = "rate(1 hour)"
   })
