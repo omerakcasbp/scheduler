@@ -14,8 +14,8 @@ resource "aws_kms_alias" "custodian_lambda_key" {
 }
 
 resource "local_file" "policy_file" {
-  filename = "./lambda/custodian/config.json"
-  content = templatefile("./lambda/custodian/policy.tpl", {
+  filename = "lambda/custodian/config.json"
+  content = templatefile("lambda/custodian/policy.tpl", {
     lambda_role_arn = aws_iam_role.CustodianLambda.arn,
     lambda_schedule = "rate(1 hour)"
   })
@@ -23,7 +23,7 @@ resource "local_file" "policy_file" {
 }
 
 data "archive_file" "custodian_lambda_archive" {
-  output_path = "./lambda/custodian.zip"
+  output_path = "lambda/custodian.zip"
   type        = "zip"
   source_dir  = "lambda/custodian"
   depends_on  = [local_file.policy_file]
