@@ -3,9 +3,11 @@ data "aws_caller_identity" "current" {}
 data "aws_vpcs" "vpcs" {
 }
 
+output "test_out" {
+  value = data.aws_vpcs.vpcs.ids
+}
 
 resource "aws_kms_key" "custodian_lambda_key" {
-  #TODO: if kms key not exists create
   description             = "This key is used to encrypt custodian lambda function"
   enable_key_rotation     = true
   deletion_window_in_days = 30
@@ -173,8 +175,3 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_rw_fallout_retry_step
   source_arn     = aws_cloudwatch_event_rule.cloud_custodian_lambda_event_rule.arn
   source_account = data.aws_caller_identity.current.account_id
 }
-
-output "test" {
-  value = data.aws_vpcs.vpcs
-}
-
