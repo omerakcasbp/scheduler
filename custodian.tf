@@ -42,7 +42,7 @@ module "cloud_custodian_lambda" {
   local_existing_package = data.archive_file.custodian_lambda_archive.output_path
   kms_key_arn            = aws_kms_key.custodian_lambda_key.arn
   lambda_role            = aws_iam_role.CustodianLambda.arn
-  tags                   = { custodian-info = "mode=periodic:version=0.9.31" }
+  tags                   = concat({ custodian-info = "mode=periodic:version=0.9.31" }, var.tags)
   depends_on             = [data.archive_file.custodian_lambda_archive]
   timeout                = 300
 }
@@ -166,7 +166,7 @@ resource "aws_cloudwatch_event_target" "profile_generator_lambda_target" {
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_rw_fallout_retry_step_deletion_lambda" {
   statement_id   = "AllowExecutionFromCloudWatch"
   action         = "lambda:InvokeFunction"
-  function_name  =  module.cloud_custodian_lambda.lambda_function_name
+  function_name  = module.cloud_custodian_lambda.lambda_function_name
   principal      = "events.amazonaws.com"
   source_arn     = aws_cloudwatch_event_rule.cloud_custodian_lambda_event_rule.arn
   source_account = data.aws_caller_identity.current.account_id

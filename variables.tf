@@ -4,3 +4,7 @@ variable "vpc_subnet_ids" {
   default     = []
 }
 
+variable "tags" {
+  default     = {}
+  description = "Tag definition for resources"
+}
