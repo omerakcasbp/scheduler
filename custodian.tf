@@ -6,12 +6,14 @@ module "module_pip_read" {
   providers = { aws.pip_read = aws.pip_read }
 }
 
+
 resource "aws_kms_key" "custodian_lambda_key" {
   description             = "This key is used to encrypt custodian lambda function"
   enable_key_rotation     = true
   deletion_window_in_days = 30
   policy                  = data.aws_iam_policy_document.kms_policy.json
 }
+
 
 resource "aws_kms_alias" "custodian_lambda_key" {
   name          = "alias/custodianlambda"
@@ -49,6 +51,7 @@ module "cloud_custodian_lambda" {
   depends_on                 = [data.archive_file.custodian_lambda_archive]
   timeout                    = 300
   cloudwatch_logs_kms_key_id = aws_kms_key.custodian_lambda_key.id
+  vpc_subnet_ids = [module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets]
 }
 
 data "aws_iam_policy_document" "custodian_lambda" {

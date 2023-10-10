@@ -9,4 +9,7 @@ variable "tags" {
   description = "Tag definition for resources"
 }
 
-
+variable "vpc_env" {
+  description = "VPC environment name"
+  type = string
+}
