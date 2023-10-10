@@ -1,5 +1,8 @@
 data "aws_caller_identity" "current" {}
 
+data "aws_vpcs" "vpcs" {
+}
+
 module "module_pip_read" {
   source  = "app.terraform.io/devolksbank-ep/module-pip/terraform//modules/pip-read"
   version = "0.0.30"
@@ -176,4 +179,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_rw_fallout_retry_step
   source_account = data.aws_caller_identity.current.account_id
 }
 
+output "test" {
+  value = data.aws_vpcs.vpcs
+}
 
