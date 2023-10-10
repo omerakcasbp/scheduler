@@ -1,10 +1,9 @@
 data "aws_caller_identity" "current" {}
 
-data "aws_vpcs" "vpcs" {
-}
-
-output "test_out" {
-  value = data.aws_vpcs.vpcs.ids
+module "module_pip_read" {
+  source  = "app.terraform.io/devolksbank-ep/module-pip/terraform//modules/pip-read"
+  version = "0.0.30"
+  providers = { aws.pip_read = aws.pip_read }
 }
 
 resource "aws_kms_key" "custodian_lambda_key" {
