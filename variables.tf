@@ -8,3 +8,5 @@ variable "tags" {
   default     = {}
   description = "Tag definition for resources"
 }
+
+
