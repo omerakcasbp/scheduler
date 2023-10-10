@@ -1,5 +1,10 @@
 data "aws_caller_identity" "current" {}
 
+module "module_pip_read" {
+  source  = "app.terraform.io/devolksbank-ep/module-pip/terraform//modules/pip-read"
+  version = "0.0.30"
+}
+
 resource "aws_kms_key" "custodian_lambda_key" {
   #TODO: if kms key not exists create
   description             = "This key is used to encrypt custodian lambda function"
@@ -44,8 +49,6 @@ module "cloud_custodian_lambda" {
   depends_on                 = [data.archive_file.custodian_lambda_archive]
   timeout                    = 300
   cloudwatch_logs_kms_key_id = aws_kms_key.custodian_lambda_key.id
-
-
 }
 
 data "aws_iam_policy_document" "custodian_lambda" {
@@ -172,4 +175,6 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_rw_fallout_retry_step
   source_account = data.aws_caller_identity.current.account_id
 }
 
-
+output "pip_output" {
+  value = module.module_pip_read
+}
