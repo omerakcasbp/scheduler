@@ -1,8 +1,8 @@
 data "aws_caller_identity" "current" {}
 
 module "module_pip_read" {
-  source  = "app.terraform.io/devolksbank-ep/module-pip/terraform//modules/pip-read"
-  version = "0.0.30"
+  source    = "app.terraform.io/devolksbank-ep/module-pip/terraform//modules/pip-read"
+  version   = "0.0.30"
   providers = { aws.pip_read = aws.pip_read }
 }
 
@@ -52,7 +52,7 @@ module "cloud_custodian_lambda" {
   depends_on                 = [data.archive_file.custodian_lambda_archive]
   timeout                    = 300
   cloudwatch_logs_kms_key_id = aws_kms_key.custodian_lambda_key.id
-  vpc_subnet_ids = [for s in module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets : s.id]
+  vpc_subnet_ids             = [for s in module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets : s.id]
 }
 
 data "aws_iam_policy_document" "custodian_lambda" {

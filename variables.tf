@@ -11,5 +11,5 @@ variable "tags" {
 
 variable "vpc_env" {
   description = "VPC environment name"
-  type = string
+  type        = string
 }
