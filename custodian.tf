@@ -33,7 +33,7 @@ resource "local_file" "policy_file" {
 data "archive_file" "custodian_lambda_archive" {
   output_path = "${path.module}/lambda/custodian.zip"
   type        = "zip"
-  source_dir  = "lambda/custodian"
+  source_dir  = "${path.module}/lambda/custodian"
   depends_on  = [local_file.policy_file]
 }
 
