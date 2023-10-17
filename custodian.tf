@@ -5,7 +5,7 @@ data "aws_caller_identity" "current" {}
 
 module "module_pip_read" {
   source    = "app.terraform.io/devolksbank-ep/module-pip/terraform//modules/pip-read"
-  version   = "1.0.1"
+  version   = "1.0.2"
   providers = { aws.pip_read = aws.pip_read }
 }
 
