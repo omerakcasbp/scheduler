@@ -102,10 +102,10 @@ resource "aws_iam_role_policy" "default" {
   policy = data.aws_iam_policy_document.custodian_lambda_policy.json
 }
 
-resource "aws_iam_role_policy" "default-vpc" {
-  name   = "CustodianLambdaVPC"
-  role   = aws_iam_role.CustodianLambda.id
-  policy = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+
+resource "aws_iam_role_policy_attachment" "default-vpc" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+  role       = aws_iam_role.CustodianLambda.id
 }
 
 
