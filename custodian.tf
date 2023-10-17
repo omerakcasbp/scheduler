@@ -1,3 +1,6 @@
+locals {
+  vpc_env = var.vpc_env == "sbx" ? "sbx" : var.vpc_env
+}
 data "aws_caller_identity" "current" {}
 
 module "module_pip_read" {
@@ -41,7 +44,7 @@ data "archive_file" "custodian_lambda_archive" {
 resource "aws_security_group" "rssg" {
   name        = "ResourceSchedulerSG"
   description = "Resource Scheduler SG"
-  vpc_id      = module.module_pip_read.vpcs.shared[var.vpc_env].id
+  vpc_id      = module.module_pip_read.vpcs.shared[local.vpc_env].id
 
   egress {
     from_port        = 0
