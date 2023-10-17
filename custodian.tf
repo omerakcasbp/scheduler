@@ -16,7 +16,7 @@ resource "aws_kms_key" "custodian_lambda_key" {
   enable_key_rotation     = true
   deletion_window_in_days = 30
   policy                  = data.aws_iam_policy_document.kms_policy.json
-  tags = var.tags
+  tags                    = var.tags
 }
 
 
@@ -74,7 +74,6 @@ module "cloud_custodian_lambda" {
   cloudwatch_logs_kms_key_id = aws_kms_key.custodian_lambda_key.arn
   vpc_subnet_ids             = [for s in module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets : s.id]
   vpc_security_group_ids     = [aws_security_group.rssg.id]
-  de
 }
 
 data "aws_iam_policy_document" "custodian_lambda" {
@@ -93,7 +92,7 @@ data "aws_iam_policy_document" "custodian_lambda" {
 resource "aws_iam_role" "CustodianLambda" {
   name               = "CustodianLambda"
   assume_role_policy = data.aws_iam_policy_document.custodian_lambda.json
-  tags = var.tags
+  tags               = var.tags
 }
 
 resource "aws_iam_role_policy" "default" {
@@ -186,7 +185,7 @@ resource "aws_cloudwatch_event_rule" "cloud_custodian_lambda_event_rule" {
   name                = "cloud-custodian-lambda-event-rule"
   description         = "scheduled every 1 hour"
   schedule_expression = "cron(1 * * * ? *)"
-  tags = var.tags
+  tags                = var.tags
 }
 
 resource "aws_cloudwatch_event_target" "profile_generator_lambda_target" {
