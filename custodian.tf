@@ -103,10 +103,6 @@ resource "aws_iam_role_policy" "default" {
 }
 
 
-resource "aws_iam_role_policy_attachment" "default-vpc" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-  role       = aws_iam_role.CustodianLambda.id
-}
 
 
 data "aws_iam_policy_document" "custodian_lambda_policy" {
@@ -118,6 +114,23 @@ data "aws_iam_policy_document" "custodian_lambda_policy" {
       "ec2:DescribeTags",
       "ec2:StopInstances",
       "ec2:DescribeInstanceStatus",
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface",
+      "ec2:AssignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses",
     ]
   }
 
@@ -142,6 +155,7 @@ data "aws_iam_policy_document" "custodian_lambda_policy" {
       aws_kms_key.custodian_lambda_key.arn
     ]
   }
+
 }
 
 data "aws_iam_policy_document" "kms_policy" {
