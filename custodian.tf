@@ -86,7 +86,7 @@ module "cloud_custodian_lambda" {
   policy      = data.aws_iam_policy_document.custodian_lambda_policy.json
   runtime     = "python3.11"
   subnet_ids  = [for s in module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets : s.id]
-  tags        = { custodian-info = "mode=periodic:version=0.9.31" }
+  tags        = merge({ custodian-info = "mode=periodic:version=0.9.31" }, var.tags)
   timeout     = 600
   handler     = "custodian_policy.runcustodian_policy.run"
   depends_on  = [data.archive_file.custodian_lambda_archive, aws_kms_key.custodian_lambda_key]
