@@ -58,23 +58,23 @@ resource "aws_security_group" "rssg" {
 
 }
 
-module "cloud_custodian_lambda" {
-  source                     = "github.com/terraform-aws-modules/terraform-aws-lambda"
-  function_name              = "ResourceScheduler"
-  description                = "Resource Scheduler"
-  handler                    = "custodian_policy.runcustodian_policy.run"
-  runtime                    = "python3.11"
-  create_package             = false
-  local_existing_package     = data.archive_file.custodian_lambda_archive.output_path
-  kms_key_arn                = aws_kms_key.custodian_lambda_key.arn
-  lambda_role                = aws_iam_role.CustodianLambda.arn
-  tags                       = merge({ custodian-info = "mode=periodic:version=0.9.31" }, var.tags)
-  depends_on                 = [data.archive_file.custodian_lambda_archive, aws_kms_key.custodian_lambda_key]
-  timeout                    = 300
-  cloudwatch_logs_kms_key_id = aws_kms_key.custodian_lambda_key.arn
-  vpc_subnet_ids             = [for s in module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets : s.id]
-  vpc_security_group_ids     = [aws_security_group.rssg.id]
-}
+#module "cloud_custodian_lambda" {
+#  source                     = "github.com/terraform-aws-modules/terraform-aws-lambda"
+#  function_name              = "ResourceScheduler"
+#  description                = "Resource Scheduler"
+#  handler                    = "custodian_policy.runcustodian_policy.run"
+#  runtime                    = "python3.11"
+#  create_package             = false
+#  local_existing_package     = data.archive_file.custodian_lambda_archive.output_path
+#  kms_key_arn                = aws_kms_key.custodian_lambda_key.arn
+#  lambda_role                = aws_iam_role.CustodianLambda.arn
+#  tags                       = merge({ custodian-info = "mode=periodic:version=0.9.31" }, var.tags)
+#  depends_on                 = [data.archive_file.custodian_lambda_archive, aws_kms_key.custodian_lambda_key]
+#  timeout                    = 300
+#  cloudwatch_logs_kms_key_id = aws_kms_key.custodian_lambda_key.arn
+#  vpc_subnet_ids             = [for s in module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets : s.id]
+#  vpc_security_group_ids     = [aws_security_group.rssg.id]
+#}
 
 
 data "aws_iam_policy_document" "custodian_lambda" {
