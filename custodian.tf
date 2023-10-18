@@ -90,6 +90,7 @@ module "cloud_custodian_lambda" {
   timeout     = 600
   handler     = "custodian_policy.runcustodian_policy.run"
   depends_on  = [data.archive_file.custodian_lambda_archive, aws_kms_key.custodian_lambda_key]
+  source_code_hash = data.archive_file.custodian_lambda_archive.output_base64sha256
   security_group_egress_rules = [
     {
       description = "Security Group rule for Resource Scheduler"
