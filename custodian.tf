@@ -63,7 +63,6 @@ module "cloud_custodian_lambda" {
   source      = "github.com/schubergphilis/terraform-aws-mcaf-lambda?ref=v1.1.0"
   name        = "ResourceScheduler"
   description = "Lambda for Resource Scheduler"
-  providers   = { aws.lambda = aws }
   filename    = data.archive_file.custodian_lambda_archive.output_path
   kms_key_arn = aws_kms_key.custodian_lambda_key.arn
   policy      = data.aws_iam_policy_document.custodian_lambda_policy.json
