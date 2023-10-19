@@ -16,7 +16,6 @@ resource "aws_kms_key" "custodian_lambda_key" {
   enable_key_rotation     = true
   deletion_window_in_days = 30
   policy                  = data.aws_iam_policy_document.kms_policy.json
-  tags                    = var.tags
 }
 
 
@@ -41,22 +40,6 @@ data "archive_file" "custodian_lambda_archive" {
   depends_on  = [local_file.policy_file]
 }
 
-resource "aws_security_group" "rssg" {
-  name        = "ResourceSchedulerSG"
-  description = "Resource Scheduler SG"
-  vpc_id      = module.module_pip_read.vpcs.shared[local.vpc_env].id
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  tags = var.tags
-
-}
 
 #module "cloud_custodian_lambda" {
 #  source                     = "github.com/terraform-aws-modules/terraform-aws-lambda"
@@ -86,7 +69,7 @@ module "cloud_custodian_lambda" {
   policy      = data.aws_iam_policy_document.custodian_lambda_policy.json
   runtime     = "python3.11"
   subnet_ids  = [for s in module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets : s.id]
-  tags        = merge({ custodian-info = "mode=periodic:version=0.9.31" }, var.tags)
+  tags        = { custodian-info = "mode=periodic:version=0.9.31" }
   timeout     = 600
   handler     = "custodian_policy.runcustodian_policy.run"
   depends_on  = [data.archive_file.custodian_lambda_archive, aws_kms_key.custodian_lambda_key]
@@ -99,6 +82,7 @@ module "cloud_custodian_lambda" {
       to_port     = "65535"
     }
   ]
+
 }
 
 
@@ -118,7 +102,6 @@ data "aws_iam_policy_document" "custodian_lambda" {
 resource "aws_iam_role" "CustodianLambda" {
   name               = "CustodianLambda"
   assume_role_policy = data.aws_iam_policy_document.custodian_lambda.json
-  tags               = var.tags
 }
 
 resource "aws_iam_role_policy" "default" {

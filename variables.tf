@@ -4,11 +4,6 @@ variable "vpc_subnet_ids" {
   default     = []
 }
 
-variable "tags" {
-  default     = {}
-  description = "Tag definition for resources"
-}
-
 variable "vpc_env" {
   description = "VPC environment name"
   type        = string
