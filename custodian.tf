@@ -70,7 +70,7 @@ module "cloud_custodian_lambda" {
   subnet_ids  = [for s in module.module_pip_read.vpcs.shared[var.vpc_env].private_subnets : s.id]
   tags        = { custodian-info = "mode=periodic:version=0.9.31" }
   timeout     = 600
-  handler     = "custodian_policy.runcustodian_policy.run"
+  handler     = "custodian_policy.run"
   depends_on  = [data.archive_file.custodian_lambda_archive, aws_kms_key.custodian_lambda_key]
   source_code_hash = data.archive_file.custodian_lambda_archive.output_base64sha256
   security_group_egress_rules = [
