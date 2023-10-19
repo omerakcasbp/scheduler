@@ -8,6 +8,11 @@ terraform {
       configuration_aliases = [aws.pip_read]
     }
 
+     aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.9"
+    }
+
 
     local = {
       version = "~> 2.4.0"
